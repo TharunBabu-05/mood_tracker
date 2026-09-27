@@ -1,8 +1,35 @@
-# React + Vite
+# AI-based Emotion Recognition and Treatment Recommendation System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An advanced system for monitoring and treating psychotic and depressed patients in a hospital setting. This application integrates facial emotion recognition, voice sentiment analysis, and AI-based medicine recommendation.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Doctor Mode
+- Secure login panel
+- Access to patient logs and records
+- AI-generated medicine recommendations with manual override
+- Prescription notes and clinical report management
+- Patient status management
+
+### Patient Mode
+- Daily mood tracking via facial and voice analysis
+- Emotional state questionnaires
+- Medication reminders and feedback collection
+- Simple and accessible interface
+
+## Technology Stack
+- Facial Emotion Analysis: OpenCV, DeepFace
+- Voice Sentiment Analysis: SpeechRecognition, Librosa
+- Chatbot: Rule-based system with voice integration
+- Medicine Recommendation: Custom rule-based engine
+- Database: SQLite
+- GUI: PyQt5
+
+## Installation
+```
+pip install -r requirements.txt
+python main.py
+```
+
+## Project Structure
+The project follows a modular architecture with separate components for doctor mode, patient mode, database management, and AI analysis engines.

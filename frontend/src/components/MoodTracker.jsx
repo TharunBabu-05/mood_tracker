@@ -103,8 +103,13 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
       setStreak(parseInt(savedStreak));
       setLastSubmission(new Date(savedLastSubmission));
       checkAndUpdateStreak(new Date(savedLastSubmission));
+      
+      // Notify parent component about streak
+      if (onStreakUpdate) {
+        onStreakUpdate(parseInt(savedStreak));
+      }
     }
-  }, []);
+  }, [onStreakUpdate]);
 
   const checkAndUpdateStreak = (lastDate) => {
     const now = new Date();
@@ -122,6 +127,12 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
     return array[Math.floor(Math.random() * array.length)];
   };
 
+  const handleMoodSelection = (score) => {
+    setSelectedMood(score);
+    const moodData = moods.find(m => m.score === score);
+    setFeedback(`${getRandomElement(moodData.messages)}. ${getRandomElement(moodData.suggestions)}`);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedMood !== null) {
@@ -136,6 +147,11 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
         localStorage.setItem('lastMoodSubmission', now.toString());
         setLastSubmission(now);
         
+        // Notify parent component about streak update
+        if (onStreakUpdate) {
+          onStreakUpdate(newStreak);
+        }
+        
         // Show streak animation
         setShowAnimation(true);
         setTimeout(() => setShowAnimation(false), 2000);
@@ -148,7 +164,7 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
 
       onMoodSubmit(selectedMood);
       
-      // Don't reset selectedMood immediately for animation
+      // Reset after submission
       setTimeout(() => {
         setSelectedMood(null);
         setNote('');
@@ -159,12 +175,14 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
   return (
     <div className="space-y-6 ">
       {/* Streak Display */}
-      <div className="streak absolute right-0  z-40 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg shadow-lg">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🔥</span>
-          <span className="font-bold">{streak} Day Streak</span>
+      {!hideStreak && (
+        <div className="streak absolute right-0  z-40 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔥</span>
+            <span className="font-bold">{streak} Day Streak</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {showAnimation && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -182,11 +200,7 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
         {moods.map(({ emoji, score, label, color }) => (
           <button
             key={score}
-            onClick={() => {
-              setSelectedMood(score);
-              const moodData = moods.find(m => m.score === score);
-              setFeedback(`${getRandomElement(moodData.messages)}. ${getRandomElement(moodData.suggestions)}`);
-            }}
+            onClick={() => handleMoodSelection(score)}
             className={`flex flex-col items-center p-4 rounded-xl transition-all duration-300
               ${selectedMood === score 
                 ? `bg-gradient-to-br ${color} transform scale-105 shadow-lg` 
@@ -219,15 +233,15 @@ const MoodTracker = ({ onMoodSubmit, onStreakUpdate, hideStreak = false }) => {
         rows={3}
       />
 
-      <button
-        onClick={handleSubmit}
-        disabled={selectedMood === null}
-        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl
-          font-medium shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl
-          disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-      >
-        Save Mood
-      </button>
+      {selectedMood !== null && (
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl
+            font-medium shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
+        >
+          Save Mood
+        </button>
+      )}
     </div>
   );
 };

@@ -23,9 +23,7 @@ export const themes = {
     primary: 'from-blue-400 to-purple-400',
     secondary: 'from-purple-400 to-pink-400',
     border: 'border-gray-700'
-  },
- 
-
+  }
 };
 
 export const ThemeProvider = ({ children }) => {
